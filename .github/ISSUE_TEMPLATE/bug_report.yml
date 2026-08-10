@@ -1,0 +1,47 @@
+name: Bug report
+description: Report a reproducible problem with the indicator or helper
+title: "[Bug]: "
+labels:
+  - bug
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for helping improve the project. Never attach Codex credential files or tokens.
+  - type: input
+    id: gnome-version
+    attributes:
+      label: GNOME Shell version
+      placeholder: "50.3"
+    validations:
+      required: true
+  - type: input
+    id: codex-version
+    attributes:
+      label: Codex CLI version
+      placeholder: "codex-cli 0.147.0"
+    validations:
+      required: true
+  - type: textarea
+    id: description
+    attributes:
+      label: Problem
+      description: What happened and what did you expect?
+    validations:
+      required: true
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: Reproduction steps
+      placeholder: |
+        1. Enable the extension
+        2. Select Refresh now
+        3. Observe ...
+    validations:
+      required: true
+  - type: textarea
+    id: helper-output
+    attributes:
+      label: Redacted helper error
+      description: Paste only the error field. Remove account identifiers, paths, and credentials.
+      render: shell
