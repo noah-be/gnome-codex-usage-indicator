@@ -10,6 +10,11 @@ project follows [Semantic Versioning](https://semver.org/).
 - Temporary AppIndicator process for showing usage immediately without a
   GNOME Wayland logout.
 
+### Changed
+
+- Refresh interval preferences are now displayed and edited in minutes while
+  retaining the existing seconds-based setting for compatibility.
+
 ## [0.1.0] - 2026-08-10
 
 ### Added

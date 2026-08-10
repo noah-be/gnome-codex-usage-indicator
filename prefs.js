@@ -54,22 +54,22 @@ export default class CodexUsageIndicatorPreferences extends ExtensionPreferences
         group.add(iconRow);
 
         const refreshRow = new Adw.SpinRow({
-            title: 'Refresh interval',
-            subtitle: 'Seconds between automatic updates',
+            title: 'Refresh interval (minutes)',
+            subtitle: 'Minutes between automatic updates',
             adjustment: new Gtk.Adjustment({
-                lower: 60,
-                upper: 3600,
-                step_increment: 60,
-                page_increment: 300,
-                value: settings.get_uint('refresh-interval'),
+                lower: 1,
+                upper: 60,
+                step_increment: 1,
+                page_increment: 5,
+                value: settings.get_uint('refresh-interval') / 60,
             }),
+            digits: 0,
             numeric: true,
         });
-        settings.bind(
-            'refresh-interval',
-            refreshRow,
-            'value',
-            Gio.SettingsBindFlags.DEFAULT);
+        refreshRow.connect('notify::value', row => {
+            const minutes = Math.round(row.value);
+            settings.set_uint('refresh-interval', minutes * 60);
+        });
         group.add(refreshRow);
 
         page.add(group);

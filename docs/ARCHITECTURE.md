@@ -20,7 +20,8 @@ only a JSON object with `ok: true` and the normalized usage fields.
 - `display-mode`: remaining or used percentage.
 - `show-reset-time`: whether the compact panel label includes the reset time.
 - `show-icon`: whether the symbolic icon is visible.
-- `refresh-interval`: automatic refresh period in seconds.
+- `refresh-interval`: automatic refresh period stored in seconds for backward
+  compatibility and presented as minutes in preferences.
 
 ### Command-line helper
 

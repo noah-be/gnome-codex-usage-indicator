@@ -65,7 +65,7 @@ gnome-extensions enable appindicatorsupport@rgcjonas.gmail.com
 ## The percentage is stale
 
 Select **Refresh now** from the indicator menu. The preferences window allows
-an automatic interval between 60 and 3600 seconds. Very frequent polling is
+an automatic interval between 1 and 60 minutes. Very frequent polling is
 unnecessary because usage changes only after Codex activity.
 
 ## Inspect GNOME Shell errors
