@@ -5,6 +5,11 @@ project follows [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+### Added
+
+- Temporary AppIndicator process for showing usage immediately without a
+  GNOME Wayland logout.
+
 ## [0.1.0] - 2026-08-10
 
 ### Added

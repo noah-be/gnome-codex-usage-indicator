@@ -1,0 +1,158 @@
+#!/usr/bin/env python3
+"""Run an AppIndicator fallback without restarting GNOME Shell."""
+
+from __future__ import annotations
+
+import argparse
+from datetime import datetime
+from pathlib import Path
+import signal
+import sys
+import threading
+
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+
+import gi  # noqa: E402
+
+gi.require_version("AppIndicator3", "0.1")
+gi.require_version("GLibUnix", "2.0")
+gi.require_version("Gtk", "3.0")
+
+from gi.repository import AppIndicator3, GLib, GLibUnix, Gtk  # noqa: E402
+
+from codex_usage_indicator.app_server import CodexUsageError, fetch_usage  # noqa: E402
+
+
+class TrayIndicator:
+    """Own the AppIndicator menu and periodic background refresh."""
+
+    def __init__(self, *, interval: int, codex_binary: str | None) -> None:
+        self._interval = interval
+        self._codex_binary = codex_binary
+        self._refreshing = False
+
+        self._indicator = AppIndicator3.Indicator.new(
+            "gnome-codex-usage-indicator",
+            "utilities-system-monitor-symbolic",
+            AppIndicator3.IndicatorCategory.APPLICATION_STATUS,
+        )
+        self._indicator.set_status(AppIndicator3.IndicatorStatus.ACTIVE)
+        self._indicator.set_title("Codex Usage Indicator")
+        self._indicator.set_label("Codex …", "Codex 100%")
+
+        menu = Gtk.Menu()
+        self._summary_item = self._information_item("Loading usage…")
+        self._reset_item = self._information_item("Reset: —")
+        self._updated_item = self._information_item("Updated: —")
+        menu.append(self._summary_item)
+        menu.append(self._reset_item)
+        menu.append(self._updated_item)
+        menu.append(Gtk.SeparatorMenuItem())
+
+        refresh_item = Gtk.MenuItem(label="Refresh now")
+        refresh_item.connect("activate", lambda _item: self.refresh())
+        menu.append(refresh_item)
+
+        quit_item = Gtk.MenuItem(label="Quit temporary indicator")
+        quit_item.connect("activate", lambda _item: Gtk.main_quit())
+        menu.append(quit_item)
+
+        menu.show_all()
+        self._indicator.set_menu(menu)
+
+    @staticmethod
+    def _information_item(label: str) -> Gtk.MenuItem:
+        item = Gtk.MenuItem(label=label)
+        item.set_sensitive(False)
+        return item
+
+    def start(self) -> None:
+        self.refresh()
+        GLib.timeout_add_seconds(
+            self._interval,
+            self._on_timeout,
+            priority=GLib.PRIORITY_DEFAULT,
+        )
+        GLibUnix.signal_add(
+            GLib.PRIORITY_DEFAULT,
+            signal.SIGTERM,
+            self._quit,
+        )
+        Gtk.main()
+
+    def _on_timeout(self) -> bool:
+        self.refresh()
+        return GLib.SOURCE_CONTINUE
+
+    @staticmethod
+    def _quit() -> bool:
+        Gtk.main_quit()
+        return GLib.SOURCE_REMOVE
+
+    def refresh(self) -> None:
+        if self._refreshing:
+            return
+
+        self._refreshing = True
+        thread = threading.Thread(target=self._fetch_in_background, daemon=True)
+        thread.start()
+
+    def _fetch_in_background(self) -> None:
+        try:
+            snapshot = fetch_usage(codex_binary=self._codex_binary)
+        except (CodexUsageError, OSError) as error:
+            GLib.idle_add(self._show_error, str(error))
+        else:
+            GLib.idle_add(self._show_usage, snapshot)
+
+    def _show_usage(self, snapshot: object) -> bool:
+        remaining = round(snapshot.remaining_percent)
+        used = round(snapshot.used_percent)
+        reset = datetime.fromtimestamp(snapshot.resets_at).astimezone()
+        updated = datetime.fromtimestamp(snapshot.retrieved_at).astimezone()
+
+        self._indicator.set_label(f"Codex {remaining}%", "Codex 100%")
+        self._summary_item.set_label(f"{remaining}% remaining · {used}% used")
+        self._reset_item.set_label(f"Reset: {reset:%c %Z}")
+        self._updated_item.set_label(f"Updated: {updated:%c %Z}")
+        self._refreshing = False
+        return GLib.SOURCE_REMOVE
+
+    def _show_error(self, message: str) -> bool:
+        self._indicator.set_label("Codex !", "Codex 100%")
+        self._summary_item.set_label("Usage unavailable")
+        self._reset_item.set_label(message)
+        self._updated_item.set_label("Select “Refresh now” to retry.")
+        self._refreshing = False
+        return GLib.SOURCE_REMOVE
+
+
+def build_parser() -> argparse.ArgumentParser:
+    parser = argparse.ArgumentParser(
+        description="Show Codex usage through an AppIndicator tray process.")
+    parser.add_argument(
+        "--interval",
+        type=int,
+        default=300,
+        help="refresh interval in seconds (default: 300)")
+    parser.add_argument(
+        "--codex",
+        metavar="PATH",
+        help="path to the Codex CLI executable")
+    return parser
+
+
+def main() -> int:
+    args = build_parser().parse_args()
+    if args.interval < 60:
+        print("codex-usage-tray: interval must be at least 60 seconds", file=sys.stderr)
+        return 2
+
+    indicator = TrayIndicator(interval=args.interval, codex_binary=args.codex)
+    indicator.start()
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

@@ -12,7 +12,7 @@ all: validate
 validate: test
 	python3 -m json.tool metadata.json >/dev/null
 	glib-compile-schemas --strict --dry-run schemas
-	python3 -c 'from pathlib import Path; files = list(Path("bin").glob("*.py")) + list(Path("codex_usage_indicator").glob("*.py")) + list(Path("tests").glob("*.py")); [compile(path.read_text(), str(path), "exec") for path in files]'
+	python3 -c 'from pathlib import Path; files = list(Path("bin").iterdir()) + list(Path("codex_usage_indicator").glob("*.py")) + list(Path("tests").glob("*.py")); [compile(path.read_text(), str(path), "exec") for path in files if path.is_file()]'
 	@if command -v node >/dev/null 2>&1; then node --check extension.js; node --check prefs.js; else echo "node not found; skipping JavaScript syntax check"; fi
 
 test:

@@ -77,6 +77,10 @@ unzip -l dist/codex-usage-indicator@noah-be.github.io.shell-extension.zip
 
 The executable bit on `bin/codex-usage` must be preserved.
 
+`bin/codex-usage-tray` is an AppIndicator fallback for testing in a running
+Wayland session where a newly installed native extension cannot be reloaded.
+It requires the Gtk 3 and AppIndicator 3 GObject-introspection bindings.
+
 ## Coding guidelines
 
 - Keep authentication and network behavior inside the Codex CLI.

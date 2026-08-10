@@ -56,6 +56,20 @@ Open its settings through the Extensions application or from a terminal:
 gnome-extensions prefs codex-usage-indicator@noah-be.github.io
 ```
 
+### Start immediately without logging out
+
+GNOME Wayland cannot reload a newly installed native Shell extension in place.
+If AppIndicator support is already active, start the included temporary tray
+process instead:
+
+```console
+./bin/codex-usage-tray
+```
+
+It shows the same remaining percentage immediately and exits automatically
+when the desktop session ends. Select **Quit temporary indicator** from its
+menu once the native extension is available after a later login.
+
 To update an existing checkout:
 
 ```console

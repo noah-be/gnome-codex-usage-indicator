@@ -54,6 +54,14 @@ updated extension code is loaded. Afterwards run:
 gnome-extensions enable codex-usage-indicator@noah-be.github.io
 ```
 
+If logging out is currently inconvenient and AppIndicator support is installed,
+use the temporary process:
+
+```console
+gnome-extensions enable appindicatorsupport@rgcjonas.gmail.com
+./bin/codex-usage-tray
+```
+
 ## The percentage is stale
 
 Select **Refresh now** from the indicator menu. The preferences window allows
