@@ -9,6 +9,8 @@ project follows [Semantic Versioning](https://semver.org/).
 
 - Temporary AppIndicator process for showing usage immediately without a
   GNOME Wayland logout.
+- Refresh-interval choices directly in the temporary AppIndicator menu, shared
+  with the native extension setting.
 
 ### Changed
 

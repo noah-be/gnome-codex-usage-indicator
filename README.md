@@ -68,7 +68,9 @@ process instead:
 
 It shows the same remaining percentage immediately and exits automatically
 when the desktop session ends. Select **Quit temporary indicator** from its
-menu once the native extension is available after a later login.
+menu once the native extension is available after a later login. Its
+**Refresh interval** submenu offers 1, 2, 5, 10, 15, 30, or 60 minutes and
+stores the selection for the native extension as well.
 
 To update an existing checkout:
 
