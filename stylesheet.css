@@ -1,0 +1,8 @@
+.codex-usage-warning {
+    color: #f6d32d;
+}
+
+.codex-usage-danger {
+    color: #ed333b;
+    font-weight: bold;
+}

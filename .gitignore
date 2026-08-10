@@ -1,0 +1,7 @@
+__pycache__/
+*.py[cod]
+dist/
+gschemas.compiled
+.coverage
+.idea/
+.vscode/

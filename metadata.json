@@ -1,0 +1,16 @@
+{
+  "description": "Shows the remaining Codex weekly usage window in the GNOME top panel.",
+  "name": "Codex Usage Indicator",
+  "settings-schema": "io.github.noahbe.codex-usage-indicator",
+  "shell-version": [
+    "45",
+    "46",
+    "47",
+    "48",
+    "49",
+    "50"
+  ],
+  "url": "https://github.com/noah-be/gnome-codex-usage-indicator",
+  "uuid": "codex-usage-indicator@noah-be.github.io",
+  "version": 1
+}

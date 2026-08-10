@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schemalist>
+  <schema id="io.github.noahbe.codex-usage-indicator"
+          path="/io/github/noahbe/codex-usage-indicator/">
+    <key name="display-mode" type="s">
+      <choices>
+        <choice value="remaining"/>
+        <choice value="used"/>
+      </choices>
+      <default>'remaining'</default>
+      <summary>Percentage displayed in the panel</summary>
+    </key>
+    <key name="show-reset-time" type="b">
+      <default>false</default>
+      <summary>Append the reset time to the panel label</summary>
+    </key>
+    <key name="show-icon" type="b">
+      <default>true</default>
+      <summary>Show the symbolic panel icon</summary>
+    </key>
+    <key name="refresh-interval" type="u">
+      <range min="60" max="3600"/>
+      <default>300</default>
+      <summary>Automatic refresh interval in seconds</summary>
+    </key>
+  </schema>
+</schemalist>
